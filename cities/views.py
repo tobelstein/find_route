@@ -6,7 +6,8 @@ from django.views.generic import ListView
 from django.core.paginator import Paginator
 from django.urls import reverse_lazy
 from .forms import HtmlForm, CityForm
-
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
 
 __all__ = (
     "home", "CityDetailView", "CityCreateView", "CityUpdateView", "CityDeleteView", "CityListView",
@@ -38,24 +39,27 @@ class CityDetailView(DetailView):
     queryset = City.objects.all()
     template_name = 'cities/detail.html'
 
-class CityCreateView(CreateView):
+class CityCreateView(SuccessMessageMixin, CreateView):
     model = City
     form_class = CityForm
     template_name = 'cities/create.html'
     success_url = reverse_lazy('cities:home')
+    success_message = "Город успешно создан"
 
-class CityUpdateView(UpdateView):
+class CityUpdateView(SuccessMessageMixin, UpdateView):
     model = City
     form_class = CityForm
     template_name = 'cities/update.html'
     success_url = reverse_lazy('cities:home')
+    success_message = "Город успешно отредактирован"
 
-class CityDeleteView(DeleteView):
+class CityDeleteView(SuccessMessageMixin, DeleteView):
     model = City
 #    template_name = 'cities/delete.html'
     success_url = reverse_lazy('cities:home')
-
+    
     def get(self, request, *args, **kwargs):
+        messages.success(request, 'Город успешно удален')
         return self.post(request, *args, **kwargs)
 
 class CityListView(ListView):
@@ -63,4 +67,8 @@ class CityListView(ListView):
     model = City
     template_name = "cities;/home.html"
 
-    
+    def get_context_data(self, **kwargs):
+        context = super.get_context_data(**kwargs)
+        form = CityForm()
+        context['form'] = form
+        return context

@@ -55,7 +55,7 @@ class CityUpdateView(SuccessMessageMixin, UpdateView):
 
 class CityDeleteView(SuccessMessageMixin, DeleteView):
     model = City
-#    template_name = 'cities/delete.html'
+    template_name = 'cities/delete.html'
     success_url = reverse_lazy('cities:home')
     
     def get(self, request, *args, **kwargs):
